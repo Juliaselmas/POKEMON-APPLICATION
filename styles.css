@@ -1,3 +1,11 @@
 body {
   background-color: #93c293;
+}
+
+#show-pokemon-container {
+  background-color: antiquewhite;
+}
+
+.pokemon-card {
+  background-color: lightpink;
 }/*# sourceMappingURL=styles.css.map */
