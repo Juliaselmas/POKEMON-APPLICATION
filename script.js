@@ -7,7 +7,9 @@ let dropDownChoice = document.querySelector("#pokemon-dropdown");
 let getCharacterBtn = document.querySelector("#get-caracter");
 let pokemonContainer = document.querySelector("#show-pokemon-container");
 let statsUl = document.querySelector("ul");
+let compareBtn = document.getElementById('compare-button');
 let pokemonArray = [];
+
 
 let getPokemonData = async () => {
     let response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
@@ -77,7 +79,9 @@ async function importToDropdown() {
     
 };
 
-
+const comparePokemonGlobal = {
+    comparePokemon: null
+};
 
 class Pokemon {
     constructor(name, imgUrl, types, weight, height, stats) {
@@ -91,6 +95,29 @@ class Pokemon {
 
 comparePokemon() {
     //sätt funktionalitet här!
+    let pokemonCards = document.querySelectorAll(".pokemon-card");
+
+    if (pokemonCards.length >= 2) {
+        let pokemon1 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[0].querySelector("h3").textContent.toLowerCase());
+        let pokemon2 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[1].querySelector("h3").textContent.toLowerCase());
+    
+        let compareResult = document.createElement("div");
+        compareResult.classList.add("compare-result-container");
+        compareResult.innerHTML = `
+        <h2>Comparison Results:</h2>
+        <p>${pokemon1.name} vs ${pokemon2.name}</p>
+        <p>Stats:</p>
+        <ul>
+            <li>Weight: ${pokemon1.weight} vs ${pokemon2.weight}</li>
+            <li>Height: ${pokemon1.height} vs ${pokemon2.height}</li>
+        </ul>    
+        `;
+
+        pokemonContainer.appendChild(compareResult);
+    } else {
+        alert("Unable to compare your selected Pokemons. Please try again!");
+    };
+    
 }
 
 //alternativ till funktion? sparas just in case
@@ -115,8 +142,8 @@ getCharacterBtn.addEventListener("click", async () => {
         <img src="${selectedPokemon.imgUrl}" alt="${selectedPokemon.name}">
         <h3>${selectedPokemon.name.toUpperCase()}</h3>
         <p>Types: ${selectedPokemon.types}</p>
-        <p>Weight: ${selectedPokemon.weight} Hg</p>
-        <p>Height: ${selectedPokemon.height} Cm</p>
+        <p>Weight: ${selectedPokemon.weight} hg</p>
+        <p>Height: ${selectedPokemon.height} dm</p>
         <p>Stats: ${JSON.stringify(selectedPokemon.stats)}</p>
         `;
         
@@ -136,6 +163,20 @@ getCharacterBtn.addEventListener("click", async () => {
     
     pokemonContainer.appendChild(pokemonCardDiv);
     //createPokemonCard();
+
+    //kontrollerar antalet Pokemon-kort och aktiverar knappen för jämförelse om det finns minst två Pokemon-kort
+    let pokemonCards = document.querySelectorAll('.pokemon-card');
+    
+    if (pokemonCards.length >= 2) {
+        compareBtn.removeAttribute('disabled');
+    } else {
+        compareBtn.setAttribute('disabled', true);
+    }
+ 
+});
+
+compareBtn.addEventListener("click", () => {
+    comparePokemon();
 });
 
 window.addEventListener('DOMContentLoaded', (event) => {

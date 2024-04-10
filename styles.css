@@ -4,8 +4,21 @@ body {
 
 #show-pokemon-container {
   background-color: antiquewhite;
+  margin: 20px 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
 .pokemon-card {
   background-color: lightpink;
+  margin: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.compare-result-container {
+  background-color: lightseagreen;
+  margin: 20px 10px;
 }/*# sourceMappingURL=styles.css.map */
