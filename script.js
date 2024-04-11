@@ -1,11 +1,14 @@
 /* NOTES:
--Hur når jag stats?
--Skapa knapp för comparePokemon IFsats: det finns mer än en pokemon i DOM
+comparePokemon() funkar ej som den ska. Hur får jag ut stats på bästa sätt?
+-Spara i localStorage?
+-Möjligheten att ta bort en pokemon?
+-Maxantal 2?
 */
 
 let dropDownChoice = document.querySelector("#pokemon-dropdown");
 let getCharacterBtn = document.querySelector("#get-caracter");
 let pokemonContainer = document.querySelector("#show-pokemon-container");
+let resultContainer = document.querySelector("#show-result-container");
 let statsUl = document.querySelector("ul");
 let compareBtn = document.getElementById('compare-button');
 let pokemonArray = [];
@@ -49,7 +52,13 @@ function createPokemonCard(details) {
         stats[stat.stat.name] = stat.base_stat;
     }
 
-    return new Pokemon(name, imgUrl, types, weight, height, stats);
+    let statsString = "";
+    for (let stat in stats) {
+        //formaterar första bokstaven till en versal
+        statsString += `${stat.charAt(0).toUpperCase() + stat.slice(1)}: ${stats[stat]}<br>`;
+    }
+
+    return new Pokemon(name, imgUrl, types, weight, height, statsString);
 };
 
 
@@ -79,9 +88,6 @@ async function importToDropdown() {
     
 };
 
-const comparePokemonGlobal = {
-    comparePokemon: null
-};
 
 class Pokemon {
     constructor(name, imgUrl, types, weight, height, stats) {
@@ -93,9 +99,114 @@ class Pokemon {
     this.stats = stats;
 }
 
-comparePokemon() {
-    //sätt funktionalitet här!
+static comparePokemon() {
     let pokemonCards = document.querySelectorAll(".pokemon-card");
+
+    if (pokemonCards.length >= 2) {
+        let pokemon1 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[0].querySelector("h3").textContent.toLowerCase());
+        let pokemon2 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[1].querySelector("h3").textContent.toLowerCase());
+    
+        let stats1 = pokemon1.stats;
+        let stats2 = pokemon2.stats;
+
+        let winner = null;
+
+        // Loopa igenom och jämför alla värden i stats
+        for (let stat in stats1) {
+            let statValue1 = stats1[stat];
+            let statValue2 = stats2[stat];
+            
+            // Kontrollera om stats-värdena är numeriska för att undvika att jämföra strängar
+            if (!isNaN(statValue1) && !isNaN(statValue2)) {
+                if (statValue1 > statValue2) {
+                    winner = pokemon1;
+                } else if (statValue1 < statValue2) {
+                    winner = pokemon2;
+                }
+            }
+        }
+
+        // Hitta vinnaren och lägg till "WINNER!"-text
+        if (winner) {
+            let winningCardDiv = pokemonCards[0].querySelector("h3").textContent.toLowerCase() === winner.name.toLowerCase() ? pokemonCards[0] : pokemonCards[1];
+            winningCardDiv.innerHTML += `<h3 class="winner-text">WINNER!</h3>`;
+        }
+    } else {
+        alert("Unable to compare your selected Pokemons. Please try again!");
+    }
+}
+};
+
+getCharacterBtn.addEventListener("click", async () => {
+    let pokemonCardDiv = document.createElement("div");
+    pokemonCardDiv.classList.add("pokemon-card");
+
+    let selectedPokemonName = dropDownChoice.value;
+    console.log(selectedPokemonName);
+
+    let selectedPokemon = pokemonArray.find(pokemon => pokemon.name === selectedPokemonName);
+
+
+    //append to DOM
+    if (selectedPokemon) {
+        pokemonCardDiv.innerHTML = `
+        <img src="${selectedPokemon.imgUrl}" alt="${selectedPokemon.name}">
+        <h3>${selectedPokemon.name.toUpperCase()}</h3>
+        <p>Types: ${selectedPokemon.types}</p>
+        <p>Weight: ${selectedPokemon.weight} hg</p>
+        <p>Height: ${selectedPokemon.height} dm</p>
+        <p>Stats:<br> ${selectedPokemon.stats}</p>
+        `;
+        
+        /* försök till att få stats listade som li istället för p:
+        statsUl.innerHTML = "";
+
+        for (let stat in selectedPokemon.stats) {
+            let li = document.createElement("li");
+            li.textContent = `${stat}: ${selectedPokemon.stats[stat]}`;
+            statsUl.appendChild(li);
+        };
+        */
+
+    } else {
+        pokemonCardDiv.innerHTML = `<p>Unable to find information about ${selectedPokemonName}</p>`;
+    } 
+    
+    pokemonContainer.appendChild(pokemonCardDiv);
+
+    //kontrollerar antalet Pokemon-kort och aktiverar knappen för jämförelse om det finns minst två Pokemon-kort
+    let pokemonCards = document.querySelectorAll('.pokemon-card');
+    
+    if (pokemonCards.length >= 2) {
+        compareBtn.removeAttribute('disabled');
+    } else {
+        compareBtn.setAttribute('disabled', true);
+    }
+ 
+});
+
+compareBtn.addEventListener("click", () => {
+    console.log("button is responding");
+    Pokemon.comparePokemon();
+    //const pokemon = new Pokemon();
+    //pokemon.comparePokemon();
+    console.log(comparePokemon());
+});
+
+window.addEventListener('DOMContentLoaded', (event) => {
+    importToDropdown();
+});
+
+
+
+
+
+
+/*
+ARKIVERAD KOD:
+
+comparePokemon funktion: 
+let pokemonCards = document.querySelectorAll(".pokemon-card");
 
     if (pokemonCards.length >= 2) {
         let pokemon1 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[0].querySelector("h3").textContent.toLowerCase());
@@ -117,79 +228,28 @@ comparePokemon() {
     } else {
         alert("Unable to compare your selected Pokemons. Please try again!");
     };
-    
-}
 
-//alternativ till funktion? sparas just in case
-//compare(pokemon){}
+    const comparePokemonGlobal = {
+    comparePokemon: null
 };
 
-getCharacterBtn.addEventListener("click", async () => {
-    let pokemonCardDiv = document.createElement("div");
-    pokemonCardDiv.classList.add("pokemon-card");
 
-    let selectedPokemonName = dropDownChoice.value;
-    console.log(selectedPokemonName);
-
-    let selectedPokemon = pokemonArray.find(pokemon => pokemon.name === selectedPokemonName);
-
-
-    //let data = await getPokemonData('https://pokeapi.co/api/v2/pokemon?limit=151' + selectedPokemon);
-
-    //append to DOM
-    if (selectedPokemon) {
-        pokemonCardDiv.innerHTML = `
-        <img src="${selectedPokemon.imgUrl}" alt="${selectedPokemon.name}">
-        <h3>${selectedPokemon.name.toUpperCase()}</h3>
-        <p>Types: ${selectedPokemon.types}</p>
-        <p>Weight: ${selectedPokemon.weight} hg</p>
-        <p>Height: ${selectedPokemon.height} dm</p>
-        <p>Stats: ${JSON.stringify(selectedPokemon.stats)}</p>
+let compareResult = document.createElement("div");
+        compareResult.classList.add("compare-result");
+        compareResult.innerHTML = `
+            <h2>Comparison Results:</h2>
+            <p>${pokemon1.name} vs ${pokemon2.name}</p>
+            <p>Stats:</p>
+            <ul>
+                <li>Weight: ${pokemon1.weight} vs ${pokemon2.weight}</li>
+                <li>Height: ${pokemon1.height} vs ${pokemon2.height}</li>
+            </ul>    
         `;
-        
-        /* försök till att få stats listade som li istället för p:
-        statsUl.innerHTML = "";
 
-        for (let stat in selectedPokemon.stats) {
-            let li = document.createElement("li");
-            li.textContent = `${stat}: ${selectedPokemon.stats[stat]}`;
-            statsUl.appendChild(li);
-        };
-        */
-
+        resultContainer.appendChild(compareResult);
     } else {
-        pokemonCardDiv.innerHTML = `<p>Unable to find information about ${selectedPokemonName}</p>`;
-    } 
-    
-    pokemonContainer.appendChild(pokemonCardDiv);
-    //createPokemonCard();
-
-    //kontrollerar antalet Pokemon-kort och aktiverar knappen för jämförelse om det finns minst två Pokemon-kort
-    let pokemonCards = document.querySelectorAll('.pokemon-card');
-    
-    if (pokemonCards.length >= 2) {
-        compareBtn.removeAttribute('disabled');
-    } else {
-        compareBtn.setAttribute('disabled', true);
+        alert("Unable to compare your selected Pokemons. Please try again!");
     }
- 
-});
-
-compareBtn.addEventListener("click", () => {
-    comparePokemon();
-});
-
-window.addEventListener('DOMContentLoaded', (event) => {
-    importToDropdown();
-});
-
-
-
-
-
-
-/*
-ARKIVERAD KOD:
 
 tamagotchi kod:
 createAnimalBtn.addEventListener("click", () => {
