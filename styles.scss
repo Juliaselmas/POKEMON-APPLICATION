@@ -6,6 +6,16 @@ li {
     list-style: none;
 }
 
+.winner {
+    background-color: green;
+    color: darkgreen;
+}
+
+.looser {
+    background-color: red;
+    color: white;
+}
+
 #main-container {
     background-color: #93c293;
     padding: 10px 20px 20px 20px;
