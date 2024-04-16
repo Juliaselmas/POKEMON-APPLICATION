@@ -107,44 +107,50 @@ static comparePokemon() {
     let pokemonCards = document.querySelectorAll(".pokemon-card");
 
     if (pokemonCards.length >= 2) {
-        let pokemon1 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[0].querySelector("h3").textContent.toLowerCase());
-        let pokemon2 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[1].querySelector("h3").textContent.toLowerCase());
+        let pokemonWins = Array(pokemonCards.length).fill(0); // Array för att lagra antalet vinster för varje pokemon
+        let maxWins = 0; // Max antal vinster
 
-        // Kontrollera om båda pokemons är giltiga
-        if (!pokemon1 || !pokemon2) {
-            return null;
-        }
+        // Loopa igenom alla kombinationer av Pokemon-kort och jämför dem
+        for (let i = 0; i < pokemonCards.length; i++) {
+            for (let j = i + 1; j < pokemonCards.length; j++) {
+                let pokemon1 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[i].querySelector("h3").textContent.toLowerCase());
+                let pokemon2 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[j].querySelector("h3").textContent.toLowerCase());
 
-        let pokemon1Wins = 0;
-        let pokemon2Wins = 0;
+                // Kontrollera om båda pokemons är giltiga
+                if (!pokemon1 || !pokemon2) {
+                    continue;
+                }
 
-        // Loopa igenom och jämför numeriska värden för varje statistik
-        for (let stat in pokemon1.stats) {
-            let statValue1 = pokemon1.stats[stat];
-            let statValue2 = pokemon2.stats[stat];
+                let pokemon1Wins = 0;
+                let pokemon2Wins = 0;
 
-            if (parseInt(statValue1) > parseInt(statValue2)) {
-                pokemon1Wins++;
-            } else if (parseInt(statValue1) < parseInt(statValue2)) {
-                pokemon2Wins++;
+                // Loopa igenom och jämför numeriska värden för varje statistik
+                for (let stat in pokemon1.stats) {
+                    let statValue1 = pokemon1.stats[stat];
+                    let statValue2 = pokemon2.stats[stat];
+
+                    if (parseInt(statValue1) > parseInt(statValue2)) {
+                        pokemon1Wins++;
+                    } else if (parseInt(statValue1) < parseInt(statValue2)) {
+                        pokemon2Wins++;
+                    }
+                }
+
+                // Uppdatera antalet vinster för varje pokemon
+                pokemonWins[i] += pokemon1Wins;
+                pokemonWins[j] += pokemon2Wins;
+
+                // Uppdatera max antal vinster
+                maxWins = Math.max(maxWins, pokemonWins[i], pokemonWins[j]);
             }
         }
 
         // Hitta vinnaren med flest vinster
-        let winner = pokemonArray.reduce((prevWinner, currentPokemon) => {
-            if (!prevWinner) return currentPokemon;
-            if (currentPokemon === pokemon1 && pokemon1Wins > pokemon2Wins) return pokemon1;
-            if (currentPokemon === pokemon2 && pokemon2Wins > pokemon1Wins) return pokemon2;
-            return prevWinner;
-        }, null);
+        let winnerIndex = pokemonWins.indexOf(maxWins);
+        let winnerPokemonCard = pokemonCards[winnerIndex];
 
-        // Markera vinnaren i PokemonCard-objektet
-        if (winner) {
-            pokemon1.winner = (winner === pokemon1);
-            pokemon2.winner = (winner === pokemon2);
-        }
-
-        return winner;
+        // Returnera det vinnande pokemon-kortet
+        return winnerPokemonCard;
     } else {
         return null;
     }
@@ -217,13 +223,13 @@ compareBtn.addEventListener("click", () => {
     let winner = Pokemon.comparePokemon();
     console.log(winner);
     if (winner) {
-    let pokemonCards = document.querySelectorAll('.pokemon-card');
-    pokemonCards.forEach(pokemonCard => {
-        if (pokemonCard.querySelector("h3").textContent.trim().toLowerCase() === winner.name.toLowerCase()) {
-            pokemonCard.innerHTML += `<h3 class="winner-text">WINNER!</h3>`;
-        }
-    });
-}
+        // Ta bort befintliga "WINNER!"-meddelanden
+        let winnerText = document.querySelectorAll('.winner-text');
+        winnerText.forEach(text => text.remove());
+
+        // Lägg till "WINNER!" till det vinnande Pokémon-kortet
+        winner.innerHTML += `<h3 class="winner-text">WINNER!</h3>`;
+    }
 });
     
 
