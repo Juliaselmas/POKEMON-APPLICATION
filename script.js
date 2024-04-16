@@ -20,7 +20,7 @@ let getPokemonData = async () => {
     return data;
   };
 
-let createPokemonCollection = async () => {
+  let createPokemonCollection = async () => {
     let pokemonData = await getPokemonData();
     pokemonArray = [];
 
@@ -32,7 +32,8 @@ let createPokemonCollection = async () => {
     };
 
     return pokemonArray;
-};  
+}; 
+
 
 //hämtar ytterligare info till varje pokemon
 async function getPokemonDetails(url) {
@@ -54,10 +55,8 @@ function createPokemonCard(details) {
 
     let statsString = "";
     for (let stat in stats) {
-        //formaterar första bokstaven till en versal
-        const formattedStatName = stat.charAt(0).toUpperCase() + stat.slice(1);
-        statsString += `<p class="${formattedStatName}-stat">${formattedStatName}: ${stats[stat]}</p>`;
-        //statsString += `${stat.charAt(0).toUpperCase() + stat.slice(1)}: ${stats[stat]}<br>`;
+        // Formatera nyckel-värdepar för varje statistik
+        statsString += `<p>${stat.charAt(0).toUpperCase() + stat.slice(1)}: ${stats[stat]}</p>`;
     }
 
     return new Pokemon(name, imgUrl, types, weight, height, statsString);
@@ -66,10 +65,13 @@ function createPokemonCard(details) {
 
 createPokemonCollection().then(pokemonArray => {
     pokemonArray.forEach(pokemonCard => {
-        //console.log(pokemonCard);
-        //console.log(pokemonArray);
+        let option = document.createElement("option");
+        option.value = pokemonCard.name;
+        option.text = pokemonCard.name.charAt(0).toUpperCase() + pokemonCard.name.slice(1);
+        dropDownChoice.appendChild(option);
+    });
 });
-});
+
 
 async function importToDropdown() {
     let dropdown = document.getElementById("pokemon-dropdown");
@@ -107,8 +109,12 @@ static comparePokemon() {
     if (pokemonCards.length >= 2) {
         let pokemon1 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[0].querySelector("h3").textContent.toLowerCase());
         let pokemon2 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[1].querySelector("h3").textContent.toLowerCase());
-    
-        let winner = null;
+
+        // Kontrollera om båda pokemons är giltiga
+        if (!pokemon1 || !pokemon2) {
+            return null;
+        }
+
         let pokemon1Wins = 0;
         let pokemon2Wins = 0;
 
@@ -124,11 +130,18 @@ static comparePokemon() {
             }
         }
 
-        // Jämför antalet vinster för att avgöra vinnaren
-        if (pokemon1Wins > pokemon2Wins) {
-            winner = pokemon1;
-        } else if (pokemon1Wins < pokemon2Wins) {
-            winner = pokemon2;
+        // Hitta vinnaren med flest vinster
+        let winner = pokemonArray.reduce((prevWinner, currentPokemon) => {
+            if (!prevWinner) return currentPokemon;
+            if (currentPokemon === pokemon1 && pokemon1Wins > pokemon2Wins) return pokemon1;
+            if (currentPokemon === pokemon2 && pokemon2Wins > pokemon1Wins) return pokemon2;
+            return prevWinner;
+        }, null);
+
+        // Markera vinnaren i PokemonCard-objektet
+        if (winner) {
+            pokemon1.winner = (winner === pokemon1);
+            pokemon2.winner = (winner === pokemon2);
         }
 
         return winner;
@@ -138,6 +151,30 @@ static comparePokemon() {
 }
 };
 
+class PokemonCard extends Pokemon {
+    constructor(name, imgUrl, types, weight, height, stats) {
+        super(name, imgUrl, types, weight, height, stats);
+        this.winner = false; // Ange initialt att kortet inte är vinnaren
+    }
+
+    // Metod för att rendera Pokemon-kortet och lägga till vinnarmeddelandet om det är vinnaren
+    render() {
+        let pokemonCardDiv = document.createElement("div");
+        pokemonCardDiv.classList.add("pokemon-card");
+        pokemonCardDiv.innerHTML = `
+            <img src="${this.imgUrl}" alt="${this.name}">
+            <h3>${this.name.toUpperCase()}</h3>
+            <p>Types: ${this.types}</p>
+            <p>Weight: ${this.weight} hg</p>
+            <p>Height: ${this.height} dm</p>
+            <p>Stats:<br> ${this.stats}</p>
+        `;
+        if (this.winner) {
+            pokemonCardDiv.innerHTML += `<h3 class="winner-text">WINNER!</h3>`;
+        }
+        return pokemonCardDiv;
+    }
+};
 
 
 getCharacterBtn.addEventListener("click", async () => {
@@ -176,21 +213,19 @@ getCharacterBtn.addEventListener("click", async () => {
 
 compareBtn.addEventListener("click", () => {
     console.log("button is responding");
+
     let winner = Pokemon.comparePokemon();
     console.log(winner);
     if (winner) {
-        // Loopa igenom alla Pokémon-kort och leta efter det som matchar vinnarens namn
-        let pokemonCards = document.querySelectorAll('.pokemon-card');
-        pokemonCards.forEach(pokemonCard => {
-            if (pokemonCard.querySelector("h3").textContent.trim().toLowerCase() === winner.name.toLowerCase()) {
-                // Hitta det Pokémon-kortet och lägg till vinstmeddelandet
-                pokemonCard.innerHTML += `<h3 class="winner-text">WINNER!</h3>`;
-            }
-        });
-    } else {
-        alert("Unable to compare your selected Pokemons. Please try again!");
-    }
+    let pokemonCards = document.querySelectorAll('.pokemon-card');
+    pokemonCards.forEach(pokemonCard => {
+        if (pokemonCard.querySelector("h3").textContent.trim().toLowerCase() === winner.name.toLowerCase()) {
+            pokemonCard.innerHTML += `<h3 class="winner-text">WINNER!</h3>`;
+        }
+    });
+}
 });
+    
 
 
 window.addEventListener('DOMContentLoaded', (event) => {
