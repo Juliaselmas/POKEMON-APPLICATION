@@ -6,7 +6,7 @@
 */
 
 let dropDownChoice = document.querySelector("#pokemon-dropdown");
-let getCharacterBtn = document.querySelector("#get-caracter");
+let getCharacterBtn = document.querySelector("#get-character");
 let pokemonContainer = document.querySelector("#show-pokemon-container");
 let resultContainer = document.querySelector("#show-result-container");
 let statsUl = document.querySelector("ul");
@@ -151,7 +151,7 @@ static comparePokemon() {
 
         // Returnera det vinnande pokemon-kortet
         console.log(pokemonWins);
-        console.log(winnerIndex);
+    
         return winnerPokemonCard;
     } else {
         return null;

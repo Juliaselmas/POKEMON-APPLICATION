@@ -1,5 +1,11 @@
+$fontText: sans-serif;
+
 body {
     background-color: #cef5ce;
+    font-family: $fontText;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 li {
@@ -17,6 +23,31 @@ li {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+
+    #header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    
+        img {
+            max-width: 70%;
+        }
+    }
+
+    #selection-container {
+       #pokemon-dropdown {
+        padding: 10px;
+        margin: 10px;
+        border: none;
+        }
+
+        #get-character {
+            padding: 10px;
+            margin: 10px;
+            border: none;  
+        }
+    }
 }
 
 #show-pokemon-container {
