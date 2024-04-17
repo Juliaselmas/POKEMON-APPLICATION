@@ -121,19 +121,22 @@ static comparePokemon() {
                     continue;
                 }
 
+                // Räkna antalet vinster för varje statistik
                 let pokemon1Wins = 0;
                 let pokemon2Wins = 0;
 
-                // Loopa igenom och jämför numeriska värden för varje statistik
                 for (let stat in pokemon1.stats) {
                     let statValue1 = pokemon1.stats[stat];
                     let statValue2 = pokemon2.stats[stat];
+                    
 
                     if (parseInt(statValue1) > parseInt(statValue2)) {
                         pokemon1Wins++;
                     } else if (parseInt(statValue1) < parseInt(statValue2)) {
                         pokemon2Wins++;
                     }
+                    console.log(statValue1);
+                    console.log(statValue2);
                 }
 
                 // Uppdatera antalet vinster för varje pokemon
@@ -150,8 +153,6 @@ static comparePokemon() {
         let winnerPokemonCard = pokemonCards[winnerIndex];
 
         // Returnera det vinnande pokemon-kortet
-        console.log(pokemonWins);
-    
         return winnerPokemonCard;
     } else {
         return null;
@@ -179,13 +180,13 @@ class PokemonCard extends Pokemon {
         }
 
         pokemonCardDiv.innerHTML = `
-            <img src="${this.imgUrl}" alt="${this.name}">
-            <h3>${this.name.toUpperCase()}</h3>
-            <p>Types: ${this.types}</p>
-            <p>Weight: ${this.weight} hg</p>
-            <p>Height: ${this.height} dm</p>
-            <p>Stats:<br> ${statsHtml}</p>
-        `;
+    <img src="${this.imgUrl}" alt="${this.name}">
+    <h3>${this.name.toUpperCase()}</h3>
+    <p>Types: ${this.types}</p>
+    <p>Weight: ${this.weight} hg</p>
+    <p>Height: ${this.height} dm</p>
+    <h4>Stats:</h4><p>${selectedPokemon.stats}</p>
+`;
         if (this.winner) {
             pokemonCardDiv.innerHTML += `<h3 class="winner-text">WINNER!</h3>`;
         }
@@ -200,8 +201,16 @@ getCharacterBtn.addEventListener("click", async () => {
     console.log(selectedPokemonName);
 
     if (selectedPokemon) {
+        let pokemonCards = document.querySelectorAll('.pokemon-card');
+
+        // Kontrollera om det redan finns två pokemon-kort i DOM
+        if (pokemonCards.length >= 2) {
+            alert("You can only select up to two pokémons.");
+            return; // Avsluta funktionen om det redan finns två pokemon-kort
+        }
+
         let pokemonCardDiv = document.createElement("div");
-        pokemonCardDiv.classList.add("pokemon-card"); // Lägg till klassen här
+        pokemonCardDiv.classList.add("pokemon-card");
 
         pokemonCardDiv.innerHTML = `
         <img src="${selectedPokemon.imgUrl}" alt="${selectedPokemon.name}">
@@ -209,15 +218,18 @@ getCharacterBtn.addEventListener("click", async () => {
         <p>Types: ${selectedPokemon.types}</p>
         <p>Weight: ${selectedPokemon.weight} hg</p>
         <p>Height: ${selectedPokemon.height} dm</p>
-        <p>Stats:<br> ${selectedPokemon.stats}</p>
+        <h4>Stats:</h4><p>${selectedPokemon.stats}</p>
         `;
 
         pokemonContainer.appendChild(pokemonCardDiv);
 
-        // Kontrollera antalet Pokemon-kort och aktivera knappen för jämförelse om det finns minst två Pokemon-kort
-        let pokemonCards = document.querySelectorAll('.pokemon-card');
+        // Kontrollera antalet Pokemon-kort och inaktivera knappen för att hämta fler karaktärer om det redan visas två Pokemon-kort
+        if (pokemonCards.length + 1 >= 2) {
+            getCharacterBtn.setAttribute('disabled', true);
+        }
 
-        if (pokemonCards.length >= 2) {
+        // Aktivera knappen för jämförelse om det finns minst två Pokemon-kort
+        if (pokemonCards.length + 1 >= 2) {
             compareBtn.removeAttribute('disabled');
         } else {
             compareBtn.setAttribute('disabled', true);
