@@ -15,8 +15,12 @@ li {
   list-style: none;
 }
 
+.winner {
+  transform: scale(1.1);
+  border: solid #0a8a17;
+}
 .winner h2 {
-  color: green;
+  color: #0a8a17;
 }
 
 #main-container {
@@ -40,10 +44,11 @@ li {
   align-items: center;
 }
 #main-container #selection-container #pokemon-dropdown {
-  font-size: 14px;
+  font-size: 20px;
   padding: 10px 15px 10px 10px;
   margin: 10px 15px 10px 10px;
   border: none;
+  background-color: transparent;
 }
 #main-container #selection-container #get-character {
   padding: 10px;
@@ -89,20 +94,34 @@ li {
 }
 #show-pokemon-container .pokemon-card p {
   margin: 5px 50px 5px 30px;
+  font-size: 14px;
 }
 
-#compare-button {
+#compare-button, #restart-button {
   padding: 10px 20px;
   font-size: 20px;
   background-color: #3f69bd;
-  color: #f6df31;
+  color: #ecd82a;
   border-radius: 15px;
+  border: solid 5px #0e2754;
+  border-top: #0e2754;
+  border-right: #0e2754;
+  transition: transform 0.2s;
 }
 
-#restart-button {
-  padding: 10px 20px;
-  font-size: 20px;
-  background-color: #3f69bd;
-  color: #f6df31;
-  border-radius: 15px;
+#compare-button:hover,
+#restart-button:hover {
+  transform: scale(1.3);
+}
+
+#winner-h3 {
+  font-size: 40px;
+  color: #0e2754;
+}
+
+#get-character:disabled,
+#compare-button:disabled,
+#restart-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }/*# sourceMappingURL=styles.css.map */

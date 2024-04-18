@@ -13,32 +13,33 @@
     <div id="header">
     <h1></h1>
     <img src="https://archives.bulbagarden.net/media/upload/d/d2/Pok%C3%A9mon_logo_English.png" alt="pokemon-logo">
-</div>
-
-<h2>Select your Pokemon:</h2>
-<div id="selection-container">
-    
-    <select id="pokemon-dropdown">
-    </select>
-    <button id="get-character">
-        <img src="pokemonball.png" alt="pokemonball" width="35px">
-    </button>
-</div>
-
-    <div id="show-pokemon-container">
-        <!-- <ul class="stats-list"></ul> -->
-       
-
     </div>
+
+    <!-- <h2>Select your Pokemon:</h2> -->
+    
+    <div id="selection-container">
+        
+        <select id="pokemon-dropdown" name="pokemon" required>
+            <option value="" disabled selected hidden><b>Select your Pokemon:</b></option>
+        </select>
+        <button id="get-character">
+            <img src="pokemonball.png" alt="pokemonball" width="35px">
+        </button>
+    </div>
+    
+     <div id="show-pokemon-container">
+     </div>
+       
+    <div id="show-result-container">
+        <h3 id="winner-h3"></h3>
+     </div>
+    
     <br>
     <button id="compare-button" disabled><b>Compare Pokemons</b></button>
     <br>
     <button id="restart-button" disabled><b>Select New Pokemons</b></button>
-    <div id="show-result-container">
-        <div id="result-pokemon1"></div>
-        <div id="result-pokemon2"></div>
 
-    </div>
+   
 </div>
 
 </body>
