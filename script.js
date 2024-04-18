@@ -8,9 +8,8 @@
 let dropDownChoice = document.querySelector("#pokemon-dropdown");
 let getCharacterBtn = document.querySelector("#get-character");
 let pokemonContainer = document.querySelector("#show-pokemon-container");
-let resultContainer = document.querySelector("#show-result-container");
-let statsUl = document.querySelector("ul");
 let compareBtn = document.getElementById('compare-button');
+let restartBtn = document.getElementById('restart-button');
 let pokemonArray = [];
 
 
@@ -216,25 +215,20 @@ class PokemonCard extends Pokemon {
         let pokemonCardDiv = document.createElement("div");
         pokemonCardDiv.classList.add("pokemon-card");
 
-        // Kontrollera vilka värden som är högre och lägre för att lägga till klasser för färg
-        let statsHtml = "";
-        for (let stat in this.stats) {
-            let statValue = this.stats[stat];
-            let statClass = parseInt(statValue) > 80 ? 'high-stat' : (parseInt(statValue) < 60 ? 'low-stat' : ''); // Anpassa dessa tröskelvärden efter önskemål
-            statsHtml += `<p class="${statClass}">${stat.charAt(0).toUpperCase() + stat.slice(1)}: ${statValue}</p>`;
-        }
-
         pokemonCardDiv.innerHTML = `
-    <img src="${this.imgUrl}" alt="${this.name}">
-    <h3>${this.name.toUpperCase()}</h3>
-    <p>Types: ${this.types}</p>
-    <p>Weight: ${this.weight} hg</p>
-    <p>Height: ${this.height} dm</p>
-    <h4>Stats:</h4><p>${selectedPokemon.stats}</p>
-`;
+        <img src="${this.imgUrl}" alt="${this.name}">
+        <h3>${this.name.toUpperCase()}</h3>
+        <p>Types: ${this.types}</p>
+        <p>Weight: ${this.weight} hg</p>
+        <p>Height: ${this.height} dm</p>
+        <h4>Stats:</h4><p>${selectedPokemon.stats}</p>
+        `;
+        
+        /*
         if (this.winner) {
             pokemonCardDiv.innerHTML += `<h3 class="winner-text">WINNER!</h3>`;
         }
+        */
         return pokemonCardDiv;
     }
 };
@@ -258,12 +252,12 @@ getCharacterBtn.addEventListener("click", async () => {
         pokemonCardDiv.classList.add("pokemon-card");
 
         pokemonCardDiv.innerHTML = `
+        <h2>${selectedPokemon.name.toUpperCase()}</h2>
         <img src="${selectedPokemon.imgUrl}" alt="${selectedPokemon.name}">
-        <h3>${selectedPokemon.name.toUpperCase()}</h3>
-        <p>Types: ${selectedPokemon.types}</p>
-        <p>Weight: ${selectedPokemon.weight} hg</p>
-        <p>Height: ${selectedPokemon.height} dm</p>
-        <h4>Stats:</h4><p>${selectedPokemon.stats}</p>
+        <p><b>Types:</b> ${selectedPokemon.types}</p>
+        <p><b>Weight:</b> ${selectedPokemon.weight} hg</p>
+        <p><b>Height:</b> ${selectedPokemon.height} dm</p>
+        <h3>Stats:</h3><p>${selectedPokemon.stats}</p>
         `;
 
         pokemonContainer.appendChild(pokemonCardDiv);
@@ -279,11 +273,21 @@ getCharacterBtn.addEventListener("click", async () => {
         } else {
             compareBtn.setAttribute('disabled', true);
         }
+        // Aktivera knappen för jämförelse om det finns minst två Pokemon-kort
+        if (pokemonCards.length + 1 >= 2) {
+            restartBtn.removeAttribute('disabled');
+        } else {
+           restartBtn.setAttribute('disabled', true);
+        }
     } else {
         alert(`Unable to find information about ${selectedPokemonName}`);
     }
 });
 
+restartBtn.addEventListener("click", () => {
+    pokemonContainer.innerHTML = "";
+    getCharacterBtn.removeAttribute('disabled');
+});
 
 compareBtn.addEventListener("click", () => {
     console.log("button is responding");
@@ -306,124 +310,3 @@ window.addEventListener('DOMContentLoaded', (event) => {
     importToDropdown();
 });
 
-
-
-
-
-
-/*
-ARKIVERAD KOD:
-
-comparePokemon funktion: 
-let pokemonCards = document.querySelectorAll(".pokemon-card");
-
-    if (pokemonCards.length >= 2) {
-        let pokemon1 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[0].querySelector("h3").textContent.toLowerCase());
-        let pokemon2 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[1].querySelector("h3").textContent.toLowerCase());
-    
-        let compareResult = document.createElement("div");
-        compareResult.classList.add("compare-result-container");
-        compareResult.innerHTML = `
-        <h2>Comparison Results:</h2>
-        <p>${pokemon1.name} vs ${pokemon2.name}</p>
-        <p>Stats:</p>
-        <ul>
-            <li>Weight: ${pokemon1.weight} vs ${pokemon2.weight}</li>
-            <li>Height: ${pokemon1.height} vs ${pokemon2.height}</li>
-        </ul>    
-        `;
-
-        pokemonContainer.appendChild(compareResult);
-    } else {
-        alert("Unable to compare your selected Pokemons. Please try again!");
-    };
-
-    const comparePokemonGlobal = {
-    comparePokemon: null
-};
-
-
-let compareResult = document.createElement("div");
-        compareResult.classList.add("compare-result");
-        compareResult.innerHTML = `
-            <h2>Comparison Results:</h2>
-            <p>${pokemon1.name} vs ${pokemon2.name}</p>
-            <p>Stats:</p>
-            <ul>
-                <li>Weight: ${pokemon1.weight} vs ${pokemon2.weight}</li>
-                <li>Height: ${pokemon1.height} vs ${pokemon2.height}</li>
-            </ul>    
-        `;
-
-        resultContainer.appendChild(compareResult);
-    } else {
-        alert("Unable to compare your selected Pokemons. Please try again!");
-    }
-
-static comparePokemon() {
-    let pokemonCards = document.querySelectorAll(".pokemon-card");
-
-    if (pokemonCards.length >= 2) {
-        let pokemon1 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[0].querySelector("h3").textContent.toLowerCase());
-        let pokemon2 = pokemonArray.find(pokemon => pokemon.name === pokemonCards[1].querySelector("h3").textContent.toLowerCase());
-    
-        let winner = null;
-        let pokemon1Wins = 0;
-        let pokemon2Wins = 0;
-
-        // Loopa igenom och jämför numeriska värden för varje statistik
-        for (let stat in pokemon1.stats) {
-            let statValue1 = pokemon1.stats[stat];
-            let statValue2 = pokemon2.stats[stat];
-
-            if (parseInt(statValue1) > parseInt(statValue2)) {
-                pokemon1Wins++;
-            } else if (parseInt(statValue1) < parseInt(statValue2)) {
-                pokemon2Wins++;
-            }
-        }
-
-        // Jämför antalet vinster för att avgöra vinnaren
-        if (pokemon1Wins > pokemon2Wins) {
-            winner = pokemon1;
-        } else if (pokemon1Wins < pokemon2Wins) {
-            winner = pokemon2;
-        }
-
-        // Markera vinnaren i gränssnittet
-        if (winner) {
-            let winningCardDiv = pokemonCards[0].querySelector("h3").textContent.toLowerCase() === winner.name.toLowerCase() ? pokemonCards[0] : pokemonCards[1];
-            winningCardDiv.innerHTML += `<h3 class="winner-text">WINNER!</h3>`;
-        } else {
-            alert("Unable to compare your selected Pokemons. Please try again!");
-        }
-    }
-}
-};
-
-tamagotchi kod:
-createAnimalBtn.addEventListener("click", () => {
-
-    let myPet = new Pet(nameInput, selectedType, 50, 50, 50, 50);
-
-    const individualPetDiv = document.createElement("div");
-    individualPetDiv.classList.add("indivdualPetDiv");
-    const individualPet = renderPet(myPet, individualPetDiv);
-    petDiv.appendChild(individualPet);
-
-    //Adoption message
-  updateMessage(
-    `congratulations! you've adopted the ${typeInput} ${nameInput}!`
-  );
-
-  //e.preventDefault();
-
-});
-
-
-TEST FETCH:
-fetch('https://pokeapi.co/api/v2/pokemon?limit=151')
-.then(res => res.json())
-.then(data => console.log(data));
-//console.log(fetch('https://pokeapi.co/api/v2/pokemon?limit=151'));
-*/

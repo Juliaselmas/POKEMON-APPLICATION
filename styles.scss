@@ -1,7 +1,12 @@
 $fontText: sans-serif;
 
-body {
-    background-color: #cef5ce;
+body, html {
+    background-image: url("colorsplash.jpg");
+    height: 100%;
+    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     font-family: $fontText;
     display: flex;
     justify-content: center;
@@ -12,12 +17,16 @@ li {
     list-style: none;
 }
 
-.winner h3 {
-    color: green; 
+.winner {
+
+    h2{
+        color: green; 
+    }
+    
 }
 
 #main-container {
-    background-color: #93c293;
+    
     padding: 10px 20px 20px 20px;
     margin: 10px;
     display: flex;
@@ -36,9 +45,14 @@ li {
     }
 
     #selection-container {
+
+    display: flex;
+    align-items: center;
+
        #pokemon-dropdown {
-        padding: 10px;
-        margin: 10px;
+        font-size: 14px;;
+        padding: 10px 15px 10px 10px;
+        margin: 10px 15px 10px 10px;
         border: none;
         }
 
@@ -46,12 +60,18 @@ li {
             padding: 10px;
             margin: 10px;
             border: none;  
+            background-color: transparent;
+            transition: transform .2s;
         }
+
+        #get-character:hover {
+            transform: scale(1.5);
+        }
+
     }
 }
 
 #show-pokemon-container {
-    background-color: antiquewhite;
     margin: 20px 10px;
     width: 100%;
     display: flex;
@@ -60,32 +80,52 @@ li {
     justify-content: center;
 
     .pokemon-card {
-        background-color: lightpink;
-        margin: 10px;
-        padding: 20px 30px;
-        display: flex;
+        background-image: url("yellowTexture.jpg");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-color: #f7e98e;
+        border: 20px solid #ddbd3c;
+        border-radius: 10px;
+        margin: 20px 25px 20px 25px;
+        padding: 20px 70px 30px 20px;
+        display: block;
         flex-direction: column;
+
+        img {
+            margin: 0 50px 0 90px;
+            min-height: 160px;
+        }
+
+        h2 {
+            margin: 5px 100px 30px 5px;
+        }
+
+        h3 {
+            margin: 20px 10px 0 30px;
+        }
+
+        p {
+            margin: 5px 50px 5px 30px;
+        }
     }    
 }
 
-#show-result-container {
-    background-color: lightgreen;
-    margin: 20px 10px;
-    padding: 10px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    .compare-result {
-        background-color: lightseagreen;
-        margin: 10px;
-        padding: 10px;
-    }
+#compare-button {
+padding: 10px 20px;
+font-size: 20px;
+background-color: #3f69bd;
+color: #f6df31;
+border-radius: 15px;
 }
 
-
+#restart-button {
+    padding: 10px 20px;
+    font-size: 20px;
+    background-color: #3f69bd;
+    color: #f6df31;
+    border-radius: 15px;
+}
 
 
 
